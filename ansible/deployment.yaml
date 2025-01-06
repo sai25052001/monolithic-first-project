@@ -24,12 +24,6 @@
     - name: renaming the tomcat
       command: mv /tmp/apache-tomcat-9.0.98 /tmp/tomcat
       tags: abc
-    - name: Changing the ownership of /tmp/tomcat
-      file:
-        path: /tmp/tomcat
-        owner: jenkins
-        group: jenkins
-        recurse: yes
 
     - name: modify context.xml file
       template:
