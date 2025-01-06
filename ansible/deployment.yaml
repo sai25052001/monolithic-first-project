@@ -62,7 +62,7 @@
       copy:
         src: /tmp/one/context.xml  # Ensure this file exists on the controller
         dest: /tmp/tomcat/webapps/manager/META-INF/context.xml
-        remote_src: no  # Use `no` if the source file is on the controller
+        remote_src: yes  # Use `no` if the source file is on the controller
     - name: modify user file
       copy:
         src: /tmp/one/tomcat-users.xml
