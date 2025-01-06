@@ -60,9 +60,12 @@
         chdir: /tmp/one
     - name: modify context.xml file
       copy:
-        src: /tmp/one/context.xml  # Ensure this file exists on the controller
+        src: /tmp/one/context.xml
         dest: /tmp/tomcat/webapps/manager/META-INF/context.xml
-        remote_src: yes  # Use `no` if the source file is on the controller
+        owner: root
+        group: root
+        mode: '0644'
+        
     - name: modify user file
       copy:
         src: /tmp/one/tomcat-users.xml
