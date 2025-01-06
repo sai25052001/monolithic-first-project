@@ -59,17 +59,11 @@
       args:
         chdir: /tmp/one
     - name: modify context.xml file
-      copy:
-        src: /tmp/one/context.xml
-        dest: /tmp/tomcat/webapps/manager/META-INF/context.xml
-        owner: root
-        group: root
-        mode: '0644'
+      command: cp -f /tmp/one/context.xml /tmp/tomcat/webapps/manager/META-INF/context.xml
         
     - name: modify user file
-      copy:
-        src: /tmp/one/tomcat-users.xml
-        dest: /tmp/tomcat/conf/tomcat-users.xml
+      command : cp -f /tmp/one/tomcat-users.xml /tmp/tomcat/conf/tomcat-users.xml
+
     - name: stop the tomcat
       shell: nohup /tmp/tomcat/bin/shutdown.sh
     - name: start the tomcat
