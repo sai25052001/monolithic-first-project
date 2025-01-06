@@ -25,18 +25,6 @@
       command: mv /tmp/apache-tomcat-9.0.98 /tmp/tomcat
       tags: abc
 
-    - name: modify context.xml file
-      template:
-        src: /home/ansible/apache-tomcat-9.0.98/webapps/manager/META-INF/context.xml
-        dest: /tmp/tomcat/webapps/manager/META-INF/context.xml
-    - name: modify user file
-      copy:
-        src: /home/ansible/apache-tomcat-9.0.98/conf/tomcat-users.xml
-        dest: /tmp/tomcat/conf/tomcat-users.xml
-    - name: stop the tomcat
-      shell: nohup /tmp/tomcat/bin/shutdown.sh
-    - name: start the tomcat
-      shell: nohup /tmp/tomcat/bin/startup.sh
 
 #deployment steps
     # 1. Install Git
@@ -63,12 +51,26 @@
       yum:
         name: maven
         state: present
+    
 
     # 5. Build the project to generate the WAR file
     - name: Execute Maven clean package
       command: mvn clean package
       args:
         chdir: /tmp/one
+
+    - name: modify context.xml file
+      template:
+        src: /tmp/one/context.xml
+        dest: /tmp/tomcat/webapps/manager/META-INF/context.xml
+    - name: modify user file
+      copy:
+        src: /tmp/one/tomcat-users.xml
+        dest: /tmp/tomcat/conf/tomcat-users.xml
+    - name: stop the tomcat
+      shell: nohup /tmp/tomcat/bin/shutdown.sh
+    - name: start the tomcat
+      shell: nohup /tmp/tomcat/bin/startup.sh
 
     # 6. Copy the WAR file from remote to Ansible controller
     - name: Fetch WAR file from remote server to controller
