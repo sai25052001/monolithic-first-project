@@ -9,17 +9,44 @@
     ansible_ssh_user: "ec2-user"
 
   tasks:
-    - name: install web server
-      yum: name=httpd state=present
+    - name: Install Nginx web server
+      yum:
+        name: nginx
+        state: present
 
-    - name: start webserver
-      service: name=httpd state=started
+    - name: Start and enable Nginx service
+      service:
+        name: nginx
+        state: started
+        enabled: yes
 
-    - name: install git
-      yum: name=git state=present
+    - name: Install Git
+      yum:
+        name: git
+        state: present
 
-    - name: get the source code from github
+    - name: Clone the source code from GitHub
       git:
         repo: "https://github.com/devops0014/aws-node-js.git"
         dest: /var/www/html/
         version: main
+
+    - name: Configure Nginx to serve content from /var/www/html
+      copy:
+        dest: /etc/nginx/conf.d/default.conf
+        content: |
+          server {
+              listen 80;
+              server_name _;
+              root /var/www/html;
+              index index.html index.htm;
+
+              location / {
+                  try_files $uri $uri/ =404;
+              }
+          }
+
+    - name: Restart Nginx to apply changes
+      service:
+        name: nginx
+        state: restarted
