@@ -27,8 +27,8 @@
     - name: Changing the ownership of /tmp/tomcat
       file:
         path: /tmp/tomcat
-        owner: ansible
-        group: ansible
+        owner: jenkins
+        group: jenkins
         recurse: yes
 
     - name: modify context.xml file
