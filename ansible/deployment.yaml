@@ -44,8 +44,8 @@
     # 6. Copy the WAR file from remote to Ansible controller
     - name: Fetch WAR file from remote server to controller
       fetch:
-        src: /tmp/one/target/*.war
-        dest: /tmp/*.war
+        src: /tmp/one/target/myweb-8.6.8.war
+        dest: /tmp/myweb-8.6.8.war
         flat: yes
 
     # 7. Ensure tomcat user exists on the remote server
@@ -57,7 +57,7 @@
     # 8. Copy WAR file to Tomcat location on the remote server
     - name: Copy WAR file to Tomcat location
       copy:
-        src: /tmp/myweb-8.6.7.war
+        src: /tmp/myweb-8.6.8.war
         dest: /tmp/tomcat/webapps/
         owner: tomcat
         group: tomcat
