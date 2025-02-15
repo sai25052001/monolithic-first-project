@@ -1,7 +1,7 @@
 resource "aws_instance" "key" {
   tags = {
     Name        = var.iname
-    Environment = "dev"
+    Environment = "Dev"
   }
   ami                    = var.ami_id
   instance_type          = var.itype
