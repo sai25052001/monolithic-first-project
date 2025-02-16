@@ -40,7 +40,8 @@
       git:
         repo: https://github.com/lit/lit.git
         dest: /var/www/html/
-        version: frontend
+        version: main
+        force: yes
       notify: Restart web server
 
   handlers:
