@@ -6,38 +6,17 @@
     ansible_ssh_user: "ubuntu"
 
   tasks:
-    - name: Install web server (Ubuntu)
-      apt:
-        name: apache2
-        state: present
-      when: ansible_facts['os_family'] == "Debian"
+    - name: install httpd
+      action: yum name=httpd state=present
 
-    - name: Install web server (RHEL-based)
-      dnf:
-        name: httpd
-        state: present
-      when: ansible_facts['os_family'] == "RedHat"
+    - name: restart httpd
+      service: name=httpd state=restarted
 
-    - name: Ensure web server is started and enabled
-      service:
-        name: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
-        state: started
-        enabled: yes
+    - name: install git in dev server
+      action: yum name=git state=present
 
-    - name: Install Git
-      package:
-        name: git
-        state: present
-
-    - name: Clone frontend code from GitHub
+    - name: get code from github
       git:
         repo: https://github.com/lit/lit.git
         dest: /var/www/html/
         version: frontend
-      notify: Restart web server
-
-  handlers:
-    - name: Restart web server
-      service:
-        name: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
-        state: restarted
