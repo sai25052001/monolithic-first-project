@@ -1,4 +1,4 @@
-resource "aws_security_group" "demo-sg" {
+resource "aws_security_group" "demo_sg" {
   name        = "sec-group"
   description = "it allows ssh and all traffic"
 
