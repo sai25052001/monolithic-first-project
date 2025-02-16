@@ -6,7 +6,7 @@ variable "itype" {
   type    = string
   default = "t2.micro"
 }
-variable "key-name" {
+variable "key_name" {
   type    = string
   default = "SaiCharanKeyPair"
 }
