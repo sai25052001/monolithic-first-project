@@ -43,7 +43,7 @@
     
     - name: Clone frontend code from GitHub
       git:
-        repo: https://github.com/lit/lit.git
+        repo: https://github.com/learning-zone/website-templates.git
         dest: /var/www/html/
         version: main
         force: yes
