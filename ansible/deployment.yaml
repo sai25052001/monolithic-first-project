@@ -28,7 +28,20 @@
       package:
         name: git
         state: present
+    - name: Ensure /var/www exists
+      file:
+        path: /var/www
+        state: directory
+        mode: '0755'
 
+    - name: Ensure /var/www/html exists
+      file:
+        path: /var/www/html
+        state: directory
+        mode: '0755'
+        owner: ubuntu
+        group: ubuntu
+        
     - name: Clone frontend code from GitHub
       git:
         repo: https://github.com/lit/lit.git
