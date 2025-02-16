@@ -1,25 +1,43 @@
 ---
-- hosts: aws_ec2
+- hosts: tag_Name_monolithic_Instance
   become: yes
-  connection: ssh
-  user: ubuntu
-
   vars:
     ansible_ssh_private_key_file: "/etc/ansible/SaiCharanKeyPair.pem"
     ansible_ssh_user: "ubuntu"
 
   tasks:
-    - name: install httpd
-      action: yum name=httpd state=present
+    - name: Install web server (Ubuntu)
+      apt:
+        name: apache2
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
 
-    - name: restart httpd
-      service: name=httpd state=restarted
+    - name: Install web server (RHEL-based)
+      dnf:
+        name: httpd
+        state: present
+      when: ansible_facts['os_family'] == "RedHat"
 
-    - name: install git in dev server
-      action: yum name=git state=present
+    - name: Ensure web server is started and enabled
+      service:
+        name: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
+        state: started
+        enabled: yes
 
-    - name: get code from github
+    - name: Install Git
+      package:
+        name: git
+        state: present
+
+    - name: Clone frontend code from GitHub
       git:
         repo: https://github.com/lit/lit.git
         dest: /var/www/html/
         version: frontend
+      notify: Restart web server
+
+  handlers:
+    - name: Restart web server
+      service:
+        name: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
+        state: restarted
