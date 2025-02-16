@@ -3,9 +3,15 @@
   become: yes
   vars:
     ansible_ssh_private_key_file: "/etc/ansible/SaiCharanKeyPair.pem"
-    ansible_ssh_user: "ubuntu"
+    ansible_ssh_common_args: "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    remote_user: ubuntu
 
   tasks:
+    - name: Update package cache (Ubuntu)
+      apt:
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+
     - name: Install web server (Ubuntu)
       apt:
         name: apache2
@@ -28,6 +34,7 @@
       package:
         name: git
         state: present
+
     - name: Ensure /var/www exists
       file:
         path: /var/www
@@ -39,9 +46,19 @@
         path: /var/www/html
         state: directory
         mode: '0755'
-        owner: ubuntu
-        group: ubuntu
-        
+        owner: www-data
+        group: www-data
+      when: ansible_facts['os_family'] == "Debian"
+
+    - name: Ensure /var/www/html exists (RHEL)
+      file:
+        path: /var/www/html
+        state: directory
+        mode: '0755'
+        owner: apache
+        group: apache
+      when: ansible_facts['os_family'] == "RedHat"
+
     - name: Clone frontend code from GitHub
       git:
         repo: https://github.com/lit/lit.git
