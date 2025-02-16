@@ -12,12 +12,6 @@
         state: present
       when: ansible_facts['os_family'] == "Debian"
 
-    - name: Install web server (RHEL-based)
-      dnf:
-        name: httpd
-        state: present
-      when: ansible_facts['os_family'] == "RedHat"
-
     - name: Ensure web server is started and enabled
       service:
         name: "{{ 'apache2' if ansible_facts['os_family'] == 'Debian' else 'httpd' }}"
