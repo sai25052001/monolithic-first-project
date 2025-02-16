@@ -9,88 +9,17 @@
     ansible_ssh_user: "ec2-user"
 
   tasks:
-    - name: installing java-1.8.0-openjdk
-      yum: name=java-1.8.0* state=present
-    - name: installing maven
-      yum: name=maven state=present
-    - name: installing java21 for tomcat setup
-      yum: name=java-21-amazon-corretto-devel* state=present
-    - name: downloading the tomcat file
-      get_url:
-        url: https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.98/bin/apache-tomcat-9.0.98.tar.gz
-        dest: /tmp
-    - name: Extract the Tomcat archive
-      command: tar -zxvf /tmp/apache-tomcat-9.0.98.tar.gz -C /tmp
-    - name: renaming the tomcat
-      command: mv /tmp/apache-tomcat-9.0.98 /tmp/tomcat
-      tags: abc
+    - name: install httpd
+      action: yum name=httpd state=present
 
+    - name: restart httpd
+      service: name=httpd state=restarted
 
-#deployment steps
-    # 1. Install Git
-    - name: Installing Git
-      yum:
-        name: git
-        state: present
+    - name: install git in dev server
+      action: yum name=git state=present
 
-    # 2. Clone the code from the repository
-    - name: Cloning the code
+    - name: get code from github
       git:
-        repo: https://github.com/sai25052001/one.git
-        dest: /tmp/one
-        version: master
-
-    # 3. Install Java 1.8.0
-    - name: Installing Java 1.8.0
-      yum:
-        name: java-1.8.0*
-        state: present
-
-    # 4. Install Maven
-    - name: Installing Maven
-      yum:
-        name: maven
-        state: present
-    
-
-    # 5. Build the project to generate the WAR file
-    - name: Execute Maven clean package
-      command: mvn clean package
-      args:
-        chdir: /tmp/one
-    - name: modify context.xml file
-      command: cp -f /tmp/one/context.xml /tmp/tomcat/webapps/manager/META-INF/context.xml
-        
-    - name: modify user file
-      command : cp -f /tmp/one/tomcat-users.xml /tmp/tomcat/conf/tomcat-users.xml
-
-    - name: stop the tomcat
-      shell: nohup /tmp/tomcat/bin/shutdown.sh
-    - name: start the tomcat
-      shell: nohup /tmp/tomcat/bin/startup.sh
-
-    # 6. Copy the WAR file from remote to Ansible controller
-    - name: Fetch WAR file from remote server to controller
-      fetch:
-        src: /tmp/one/target/myweb-8.6.8.war
-        dest: /tmp/myweb-8.6.8.war
-        flat: yes
-
-    # 7. Ensure tomcat user exists on the remote server
-    - name: Ensure tomcat user exists
-      user:
-        name: tomcat
-        state: present
-
-    # 8. Copy WAR file to Tomcat location on the remote server
-    - name: Copy WAR file to Tomcat location
-      copy:
-        src: /tmp/myweb-8.6.8.war
-        dest: /tmp/tomcat/webapps/
-        owner: tomcat
-        group: tomcat
-        mode: '0644'
-
-    # 9. Restart Tomcat service to apply changes
-    - name: Restart Tomcat service
-      command: /tmp/tomcat/bin/shutdown.sh && /tmp/tomcat/bin/startup.sh
+        repo: https://github.com/lit/lit.git
+        dest: /var/www/html/
+        version: frontend
