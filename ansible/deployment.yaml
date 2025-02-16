@@ -35,7 +35,12 @@
         mode: '0755'
         owner: ubuntu
         group: ubuntu
-        
+
+    - name: Remove existing directory
+      file:
+        path: /var/www/html
+        state: absent
+    
     - name: Clone frontend code from GitHub
       git:
         repo: https://github.com/lit/lit.git
